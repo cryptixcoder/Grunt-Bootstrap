@@ -51,11 +51,12 @@ module.exports = function(grunt){
 
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
 	grunt.registerTask('develop', ['jshint','uglify','sass','watch']);
-	grunt.registerTask('javascript', ['uglify', 'jshint', 'watch:js']);
-	grunt.registerTask('style', ['sass','watch']);
+	grunt.registerTask('javascript', ['jshint', 'uglify','watch:js']);
+	grunt.registerTask('style', ['sass','watch:scss']);
 	grunt.registerTask('production', ['jshint', 'uglify', 'sass']);
 
 };
