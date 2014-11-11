@@ -4,9 +4,18 @@ module.exports = function(grunt){
 		sass: {
 			dist: {
 				files: {
-					'assets/css/<.css' : [
+					'src/css/<%= pkg.name =%>.css' : [
 						'src/scss/**/*.scss',
 						'src/scss/*.scss'
+					]
+				}
+			}
+		},
+		cssmin: {
+			dist: {
+				files: {
+					'assets/css/<%= pkg.name =%>.min.css':[
+						'src/css/*.css'
 					]
 				}
 			}
@@ -24,7 +33,7 @@ module.exports = function(grunt){
 		uglify: {
 			build: {
 				files: {
-					'assets/js/app.min.js': [
+					'assets/js/<%= pkg.name =%>.min.js': [
 						'lib/**/*.js',
 						'lib/*.js',
 						'src/js/**/*.js',
@@ -39,8 +48,8 @@ module.exports = function(grunt){
 				tasks: ['jshint', 'quint']
 			},
 			css: {
-				files: ['src/scss/**/*.scss','src/scss/*.scss']
-				tasks: ['sass']
+				files: ['src/scss/**/*.scss','src/scss/*.scss'],
+				tasks: ['sass','cssmin']
 			},
 			js: {
 				files: ['src/js/**/*.js','src/js/*.js'],
@@ -52,11 +61,12 @@ module.exports = function(grunt){
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
-	grunt.registerTask('develop', ['jshint','uglify','sass','watch']);
+	grunt.registerTask('develop', ['jshint','uglify','sass', 'cssmin','watch']);
 	grunt.registerTask('javascript', ['jshint', 'uglify','watch:js']);
-	grunt.registerTask('style', ['sass','watch:scss']);
-	grunt.registerTask('production', ['jshint', 'uglify', 'sass']);
+	grunt.registerTask('style', ['sass', 'cssmin','watch:css']);
+	grunt.registerTask('production', ['jshint', 'uglify', 'sass', 'cssmin']);
 
 };
