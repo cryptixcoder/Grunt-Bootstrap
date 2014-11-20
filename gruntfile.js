@@ -1,25 +1,5 @@
 module.exports = function(grunt){
 	grunt.initConfig({
-		pkg: grunt.file.readJSON('package.json'),
-		sass: {
-			dist: {
-				files: {
-					'src/css/<%= pkg.name =%>.css' : [
-						'src/scss/**/*.scss',
-						'src/scss/*.scss'
-					]
-				}
-			}
-		},
-		cssmin: {
-			dist: {
-				files: {
-					'assets/css/<%= pkg.name =%>.min.css':[
-						'src/css/*.css'
-					]
-				}
-			}
-		},
 		jshint: {
 			files: ['src/**/*.js', 'src/*.js'],
 			options: {
@@ -30,10 +10,36 @@ module.exports = function(grunt){
 				}
 			}
 		},
+		concat: {
+			options: {
+				separator: ' \n\n'
+			},
+			dist: {
+				src: ['src/scss/*.scss'],
+				dest: 'src/build/style.scss'
+			}
+		},
+		sass: {
+			dist: {
+				options: {
+					style: 'expanded'
+				},
+				files: {
+					'src/build/style.css' : 'src/build/style.scss'
+				}
+			}
+		},
+		cssmin: {
+			target: {
+				files: {
+					'assets/css/app.min.css' : ['src/css/*.css','src/build/style.css']
+				}
+			}
+		},
 		uglify: {
 			build: {
 				files: {
-					'assets/js/<%= pkg.name =%>.min.js': [
+					'assets/js/script.min.js': [
 						'lib/**/*.js',
 						'lib/*.js',
 						'src/js/**/*.js',
@@ -43,30 +49,30 @@ module.exports = function(grunt){
 			}
 		},
 		watch: {
-			jshint: {
-				files: ['<%= jshint.files =%>'],
-				tasks: ['jshint', 'quint']
-			},
-			css: {
-				files: ['src/scss/**/*.scss','src/scss/*.scss'],
-				tasks: ['sass','cssmin']
-			},
 			js: {
-				files: ['src/js/**/*.js','src/js/*.js'],
-				tasks: ['uglify']
+				files: ['src/js/*.js'],
+				tasks: ['jshint', 'uglify']
+			},
+			scss: {
+				files: ['src/scss/*.scss'],
+				tasks: ['concat','sass','cssmin']
 			}
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
+	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
-	grunt.registerTask('develop', ['jshint','uglify','sass', 'cssmin','watch']);
-	grunt.registerTask('javascript', ['jshint', 'uglify','watch:js']);
-	grunt.registerTask('style', ['sass', 'cssmin','watch:css']);
-	grunt.registerTask('production', ['jshint', 'uglify', 'sass', 'cssmin']);
-
+	grunt.registerTask('default', [ 
+		'jshint',
+		'concat',
+		'sass',
+		'cssmin',
+		'uglify',
+		'watch'
+	]);
 };
